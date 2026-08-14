@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Mango Tree Climb — Competition Edition</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Nunito:wght@500;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+<canvas id="game"></canvas>
+
+<section id="menu" class="screen menu-screen">
+  <div class="sky-glow"></div><div class="sun"></div><div class="cloud cloud-a"></div><div class="cloud cloud-b"></div>
+  <div class="hill hill-back"></div><div class="hill hill-front"></div>
+  <div class="menu-tree"><div class="menu-trunk"></div><div class="menu-canopy c1"></div><div class="menu-canopy c2"></div><div class="menu-canopy c3"></div><span class="menu-mango m1">🥭</span><span class="menu-mango m2">🥭</span><span class="menu-mango m3">🥭</span><div class="menu-monkey">🐒</div></div>
+
+  <aside class="menu-qr-card" aria-label="Game QR code">
+    <div class="side-card-label">CONNECT WITH ME</div>
+    <img src="qr-code.png" alt="Game QR code">
+  </aside>
+
+  <aside class="menu-leaderboard-card" aria-label="Top ten climbers">
+    <div class="board-heading"><div class="side-card-title">🏆 TOP 10 CLIMBERS</div><button class="download-board-btn" type="button" aria-label="Download leaderboard CSV" title="Download leaderboard CSV">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v11m0 0 4-4m-4 4-4-4M5 19h14a2 2 0 0 0 2-2v-1M3 16v1a2 2 0 0 0 2 2"/></svg>
+    </button></div>
+    <div id="menuLeaderboardSide"></div>
+  </aside>
+
+  <div class="menu-content">
+    <div class="eyebrow">🥭 THE MANGO CHALLENGE</div>
+    <h1><span>MANGO</span><strong>TREE CLIMB</strong></h1>
+    <p class="tagline">CLIMB HIGH · DODGE MONKEYS · BEAT THE RECORD</p>
+
+    <div class="profile-card">
+      <label for="playerName">CLIMBER NAME</label>
+      <div class="profile-input"><input id="playerName" maxlength="12" placeholder="ENTER YOUR NAME" autocomplete="off" aria-label="Player name" required></div>
+      <label for="companyName" class="company-label">COMPANY NAME</label>
+      <div class="profile-input company-input"><input id="companyName" maxlength="28" placeholder="ENTER YOUR COMPANY" autocomplete="organization" aria-label="Company name" required></div>
+    </div>
+
+    <button id="playBtn" class="primary-btn">START CLIMBING <span>→</span></button>
+    <div id="profileError" class="profile-error hidden">PLEASE ENTER BOTH YOUR NAME AND COMPANY TO START.</div>
+    <div class="menu-game-info">
+      <div class="menu-info-title">GAME CONTROLS &amp; MANGO FUNCTIONS</div>
+      <div class="menu-info-row">
+        <span><b>← →</b> MOVE</span><span><b>↑ / ↓</b> CLIMB / DESCEND</span><span><b>SPACE</b> MANGO RUSH</span><span><b>P</b> PAUSE</span>
+      </div>
+      <div class="menu-mango-legend">
+        <span>🟢 <b>ROTTEN</b> −1 HEALTH</span><span>🟡 <b>YELLOW</b> +20 SCORE + RUSH</span><span>🥭 <b>GOLDEN</b> +40 SCORE + BIG RUSH</span>
+      </div>
+    </div>
+    <div class="menu-board menu-board-mobile"><div class="board-heading"><div class="board-title">🏆 TOP 10 CLIMBERS</div><button class="download-board-btn" type="button" aria-label="Download leaderboard CSV" title="Download leaderboard CSV">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v11m0 0 4-4m-4 4-4-4M5 19h14a2 2 0 0 0 2-2v-1M3 16v1a2 2 0 0 0 2 2"/></svg>
+    </button></div><div id="menuLeaderboard"></div></div>
+    <div class="best-note">One screen · one goal · climb higher than everyone else.</div>
+  </div>
+</section>
+
+<div id="hud" class="hud hidden">
+  <div class="hud-left">
+    <div class="hud-card height-card"><span>HEIGHT</span><strong id="height">0</strong><small>M</small><div class="height-rewards"><span id="yellowBonus">🟡 +20 × 0</span><span id="goldBonus">✨ +40 × 0</span></div></div>
+    <div class="hud-card"><span>SCORE</span><strong id="score">0</strong></div>
+    <div class="hud-card health"><span>HEALTH</span><strong id="hearts">♥ ♥ ♥</strong></div>
+  </div>
+  <div class="rush-card"><div><span>MANGO RUSH</span><b id="rushText">0%</b></div><div class="rush-track"><i id="rushBar"></i></div><small id="rushHint">CATCH 🟡🥭 · DODGE 🟢 TO CHARGE</small></div>
+  <div class="hud-right"><button id="pauseBtn" class="icon-btn pause-icon" aria-label="Pause">⏸</button><button id="soundBtn" class="icon-btn" aria-label="Sound">🔊</button></div>
+</div>
+
+<section id="controls" class="modal-screen hidden"><div class="modal-card"><div class="modal-icon">🧗</div><h2>HOW TO CLIMB</h2><div class="control-grid"><div><b>← →</b><span>Move left and right to dodge mangoes</span></div><div><b>↑ / ↓</b><span>Climb or descend only while you hold the keys</span></div><div><b>🐒</b><span>Monkeys above you throw mangoes downward</span></div><div><b>SPACE</b><span>When charged, slow incoming mangoes for a short survival window</span></div><div><b>P / ESC</b><span>Pause the climb</span></div></div><p class="simple-tip">Mango Rush starts at <b>0%</b>. Catch yellow/golden mangoes and perform near-misses to charge it. At 25%+, press SPACE to slow incoming mangoes temporarily.</p><button class="secondary-btn" data-close>BACK</button></div></section>
+
+<section id="tips" class="modal-screen hidden"><div class="modal-card"><div class="modal-icon">🐒</div><h2>CLIMB SMART</h2><div class="tip-list"><p>🟢 <b>Rotten Mango</b> — dodge it. If it hits you, you lose 1 health.</p><p>🟡 <b>Yellow Mango</b> — catch it for <b>+20 score</b> and a small Rush boost.</p><p>🥭 <b>Golden Mango</b> — rare premium reward: <b>+40 score</b> and a big Rush boost.</p><p>📈 <b>Difficulty</b> — the higher you climb, the mangoes become faster and more numerous.</p><p>🌿 <b>Branches</b> — branches are spaced apart and monkeys alternate sides, keeping the opening climb readable.</p><p>⚡ <b>Mango Rush</b> — starts at <b>0%</b>. Build charge by catching yellow/golden mangoes and making near-misses. At <b>25%</b> or more, press <b>SPACE</b> to temporarily slow incoming mangoes. The more charge you save, the longer the slowdown lasts.</p></div><button class="secondary-btn" data-close>BACK</button></div></section>
+
+<section id="pause" class="modal-screen hidden"><div class="modal-card"><div class="modal-icon">🌿</div><h2>PAUSED</h2><p>The monkeys are waiting...</p><button id="resumeBtn" class="primary-btn small">RESUME CLIMB</button><button id="quitBtn" class="secondary-btn">MAIN MENU</button></div></section>
+
+<section id="gameover" class="modal-screen hidden"><div class="result-card">
+  <div id="recordBadge" class="record-badge">RUN COMPLETE</div><h2 id="resultTitle">GREAT CLIMB!</h2>
+  <div class="final-height"><strong id="finalHeight">0</strong><span>METERS</span></div><div class="final-score">SCORE <b id="finalScore">0</b></div>
+  <div class="result-stats"><div><b id="finalMangoes">0</b><span>MANGOES</span></div><div><b id="finalDodges">0</b><span>NEAR MISSES</span></div><div><b id="finalCombo">x1</b><span>BEST COMBO</span></div><div><b id="finalRank">#—</b><span>LEADERBOARD</span></div></div>
+  <label class="name-label">SAVE YOUR SCORE<input id="nameInput" maxlength="12" placeholder="ENTER YOUR NAME" autocomplete="off"></label>
+  <label class="name-label company-result-label">COMPANY NAME<input id="companyInput" maxlength="28" placeholder="ENTER YOUR COMPANY" autocomplete="organization"></label>
+  <button id="submitBtn" class="primary-btn small">SAVE SCORE</button><button id="retryBtn" class="secondary-btn">CLIMB AGAIN</button>
+</div></section>
+
+<div id="mobileControls" class="mobile-controls hidden"><button data-key="left">◀</button><button data-key="up">▲</button><button data-key="right">▶</button><button data-key="rush" class="rush-btn">⚡</button></div>
+<audio id="bgMusic" src="mango_ambience.wav" loop preload="auto" autoplay playsinline></audio>
+<script src="game.js"></script>
+</div>
+</body>
+</html>
